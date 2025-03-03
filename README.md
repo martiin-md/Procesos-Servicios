@@ -24,8 +24,6 @@
 🔹 Consumo de servicios con HTTP
 
 🔒 UT5 - Técnicas de Programación Segura
-🔹 Encriptación y hashing
-🔹 Control de accesos y autenticación
-🔹 Seguridad en el manejo de datos
+🔹 Manuales del uso de JUnit y de Selenium
 
 Cada carpeta contiene ejemplos prácticos y código para cada unidad. ¡Explora y aprende! 🚀💡
