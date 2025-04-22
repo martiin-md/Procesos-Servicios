@@ -1,0 +1,287 @@
+<header class="py-2" style="background-color: #052B38; color: white; position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;">
+  <style>
+    /* Enlaces personalizados */
+    .custom-link {
+      color: white;
+      font-weight: bold;
+      margin-right: 15px;
+      text-decoration: none;
+      white-space: nowrap; /* Evita el salto de línea */
+      display: flex;
+      align-items: center;
+    }
+    .custom-link:hover {
+      color: #E0E0E0;
+    }
+    /* Iconos en la barra */
+    .nav-icon {
+      width: 20px;  /* Ajusta el tamaño según tus necesidades */
+      height: auto;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+    /* Título */
+    .main-title {
+      margin: 0;
+      text-align: center;
+    }
+    /* Contenedor del header con tres columnas y sin wrapping */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 50px;
+      box-sizing: border-box;
+      flex-wrap: nowrap;
+    }
+    /* Menú de navegación (izquierda) */
+    .header-nav {
+      flex: 1;
+    }
+    /* Estilos para el ul de navegación */
+    .nav {
+      display: flex;
+      flex-wrap: nowrap;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      gap: 10px;
+    }
+    .header-nav .nav-item {
+      display: inline-block;
+      position: relative;
+    }
+    .header-nav .nav-link {
+      padding: 15px 10px;
+      white-space: nowrap; /* Evita el salto de línea en el enlace */
+    }
+    /* Dropdown menu */
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      background-color: #052B38;
+      min-width: 160px;
+      z-index: 1001;
+    }
+    .dropdown-menu a {
+      color: white;
+      padding: 10px 15px;
+      text-decoration: none;
+      display: block;
+      white-space: nowrap;
+    }
+    .dropdown-menu a:hover {
+      background-color: #0b5a75;
+    }
+    /* Mostrar el dropdown al hacer hover */
+    .nav-item.dropdown:hover .dropdown-menu {
+      display: block;
+    }
+    /* Título centrado */
+    .header-title {
+      flex: 1;
+      text-align: center;
+    }
+    /* Contenedor para usuario y logout (derecha) */
+    .header-user {
+      flex: 1;
+      text-align: right;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .navbar-text-username {
+      font-weight: bold;
+      margin-right: 10px;
+      font-size: 1.2rem;
+    }
+    /* Botón de logout */
+    .btn-logout {
+      background-color: #0D6D8D !important;
+      border-color: #0D6D8D !important;
+      color: #ffffff !important;
+      font-weight: normal;
+    }
+    .btn-logout:hover {
+      background-color: #0b5a75 !important;
+      border-color: #0b5a75 !important;
+    }
+    /* Ajustes para pantallas pequeñas */
+    @media (max-width: 768px) {
+      .custom-link {
+        margin-right: 8px;
+      }
+      .header {
+        padding: 0 20px;
+      }
+      .main-title {
+        font-size: 1.25rem;
+      }
+    }
+    .custom-link.active {
+      position: relative;   
+      padding-bottom: 3px;  
+    }
+    .custom-link.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;              
+      width: 100%;
+      height: 2px;            
+      background-color: white;
+    }    
+  </style>
+
+  <div class="header">
+    <!-- Menú de navegación (izquierda) -->
+    <div class="header-nav">
+      <nav>
+        <ul class="nav">
+          {% if session.get('role') == 'compras' %}
+            <!-- Rol de compras: COMPRAS, INFORMES y VER ENTRADAS -->
+            <li class="nav-item">
+              <a class="nav-link custom-link {% if active_page == 'form1' %}active{% endif %}" href="/index">
+                <img src="{{ url_for('static', filename='images/iconos/compras.png') }}" alt="Compras" class="nav-icon">COMPRAS
+              </a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link custom-link {% if active_page == 'informes' %}active{% endif %}" href="#">
+                <img src="{{ url_for('static', filename='images/iconos/informes.png') }}" alt="Informes" class="nav-icon">INFORMES
+              </a>
+              <ul class="dropdown-menu">
+                <li><a href="/deuda_proveedor">Deuda proveedor</a></li>
+                <li><a href="/entradas_proveedor">Entradas proveedor</a></li>
+                <li><a href="/contratos_pendientes">Contratos pendientes</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link custom-link {% if active_page == 'ver_entradas' %}active{% endif %}" href="/ver_entradas">
+                <img src="{{ url_for('static', filename='images/iconos/ver_entradas.png') }}" alt="Ver Entradas" class="nav-icon">VER ENTRADAS
+              </a>
+            </li>
+    
+          {% elif session.get('role') == 'recepcion' %}
+            <!-- Rol de recepción: CREAR ENTRADAS, STOCK CINAS y VER ENTRADAS -->
+            <li class="nav-item">
+              <a class="nav-link custom-link {% if active_page == 'form3' %}active{% endif %}" href="/entradas">
+                <img src="{{ url_for('static', filename='images/iconos/entradas.png') }}" alt="Crear Entradas" class="nav-icon">CREAR ENTRADAS
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link custom-link {% if active_page == 'stock_cinas' %}active{% endif %}" href="/stock_cinas">
+                <img src="{{ url_for('static', filename='images/iconos/stock.png') }}" alt="Stock CINAS" class="nav-icon">STOCK CINAS
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link custom-link {% if active_page == 'ver_entradas' %}active{% endif %}" href="/ver_entradas">
+                <img src="{{ url_for('static', filename='images/iconos/ver_entradas.png') }}" alt="Ver Entradas" class="nav-icon">VER ENTRADAS
+              </a>
+            </li>
+    
+          {% elif session.get('role') == 'tecnico' %}
+            <!-- Rol de técnico: ESTADO, INFORMES, STOCK CINAS y VER ENTRADAS -->
+            <li class="nav-item">
+              <a class="nav-link custom-link {% if active_page == 'form2' %}active{% endif %}" href="/estados">
+                <img src="{{ url_for('static', filename='images/iconos/estados.png') }}" alt="Estado" class="nav-icon">ESTADO
+              </a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link custom-link {% if active_page == 'informes' %}active{% endif %}" href="#">
+                <img src="{{ url_for('static', filename='images/iconos/informes.png') }}" alt="Informes" class="nav-icon">INFORMES
+              </a>
+              <ul class="dropdown-menu">
+                <li><a href="/deuda_proveedor">Deuda proveedor</a></li>
+                <li><a href="/entradas_proveedor">Entradas proveedor</a></li>
+                <li><a href="/contratos_pendientes">Contratos pendientes</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link custom-link {% if active_page == 'stock_cinas' %}active{% endif %}" href="/stock_cinas">
+                <img src="{{ url_for('static', filename='images/iconos/stock.png') }}" alt="Stock CINAS" class="nav-icon">STOCK CINAS
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link custom-link {% if active_page == 'ver_entradas' %}active{% endif %}" href="/ver_entradas">
+                <img src="{{ url_for('static', filename='images/iconos/ver_entradas.png') }}" alt="Ver Entradas" class="nav-icon">VER ENTRADAS
+              </a>
+            </li>
+
+          {% elif session.get('role') == 'operador' %}
+            <!-- Rol operador: ENTRADAS e INFORME ENTRADAS -->
+            <li class="nav-item">
+              <a class="nav-link custom-link {% if active_page == 'entradas' %}active{% endif %}" href="/entradas">
+                <img src="{{ url_for('static', filename='images/iconos/entradas.png') }}" alt="Entradas" class="nav-icon">ENTRADAS
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link custom-link {% if active_page == 'informe_entradas' %}active{% endif %}" href="/informe_entradas">
+                <img src="{{ url_for('static', filename='images/iconos/informes.png') }}" alt="Informe Entradas" class="nav-icon">INFORME ENTRADAS
+              </a>
+            </li>
+
+          {% else %}
+            <!-- Para otros roles (por ejemplo, superadmin) se muestran todos o un menú distinto -->
+            <li class="nav-item">
+              <a class="nav-link custom-link {% if active_page == 'form1' %}active{% endif %}" href="/index">
+                <img src="{{ url_for('static', filename='images/iconos/compras.png') }}" alt="Compras" class="nav-icon">COMPRAS
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link custom-link {% if active_page == 'form2' %}active{% endif %}" href="/estados">
+                <img src="{{ url_for('static', filename='images/iconos/estados.png') }}" alt="Estado" class="nav-icon">ESTADO
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link custom-link {% if active_page == 'form3' %}active{% endif %}" href="/entradas">
+                <img src="{{ url_for('static', filename='images/iconos/entradas.png') }}" alt="Crear Entradas" class="nav-icon">CREAR ENTRADAS
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link custom-link {% if active_page == 'ver_entradas' %}active{% endif %}" href="/ver_entradas">
+                <img src="{{ url_for('static', filename='images/iconos/ver_entradas.png') }}" alt="Ver Entradas" class="nav-icon">VER ENTRADAS
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link custom-link {% if active_page == 'produccion' %}active{% endif %}" href="/produccion">
+                <img src="{{ url_for('static', filename='images/iconos/operaciones.png') }}" alt="Operación" class="nav-icon">OPERACIÓN
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link custom-link {% if active_page == 'stock_cinas' %}active{% endif %}" href="/stock_cinas">
+                <img src="{{ url_for('static', filename='images/iconos/stock.png') }}" alt="Stock CINAS" class="nav-icon">STOCK CINAS
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link custom-link {% if active_page == 'usuarios' %}active{% endif %}" href="/usuarios">
+                <img src="{{ url_for('static', filename='images/iconos/usuarios.png') }}" alt="Users" class="nav-icon">USUARIOS
+              </a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link custom-link {% if active_page == 'informes' %}active{% endif %}" href="#">
+                <img src="{{ url_for('static', filename='images/iconos/informes.png') }}" alt="Informes" class="nav-icon">INFORMES
+              </a>
+              <ul class="dropdown-menu">
+                <li><a href="/deuda_proveedor">Deuda proveedor</a></li>
+                <li><a href="/entradas_proveedor">Entradas proveedor</a></li>
+                <li><a href="/contratos_pendientes">Contratos pendientes</a></li>
+                <li><a href="/ver_operaciones">Ver operaciones</a></li>
+              </ul>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>    
+
+    <!-- Título centrado -->
+    <div class="header-title">
+      <h1 class="main-title">{{ title }}</h1>
+    </div>
+
+    <!-- Usuario y botón de logout -->
+    <div class="header-user">
+      <span class="navbar-text-username">{{ session.get('user') }}</span>
+      <a class="btn btn-logout" href="{{ url_for('logout') }}">Logout</a>
+    </div>
+  </div>
+</header>

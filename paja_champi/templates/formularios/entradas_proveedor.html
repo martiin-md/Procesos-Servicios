@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Informe Entradas por Proveedor{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Incluye Select2 CSS -->
+    <link rel="stylesheet" href="/static/css/select2.min.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        main {
+            flex: 1;
+            margin-top: 90px;
+        }
+        footer {
+            background-color: #052B38;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        /* Formularios de filtro */
+        .filter-form {
+            border: none;
+            background: none;
+            margin-bottom: 10px;
+            padding: 0;
+        }
+        .filter-form.form-inline .form-group {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+            margin-bottom: 10px;
+        }
+        .filter-form.form-inline .form-group:last-child {
+            margin-right: 0;
+        }
+        .filter-form.form-inline label {
+            margin-right: 5px;
+            margin-bottom: 0;
+        }
+        .filter-form.form-inline .form-control {
+            margin-right: 5px;
+        }
+        .filter-form.form-inline {
+            flex-wrap: nowrap;
+        }
+        
+        /* Botón personalizado */
+        .custom-button {
+            background-color: #EE964B;
+            border-color: #EE964B;
+            color: white;
+            font-size: 0.875rem;
+        }
+        .custom-button:hover {
+            background-color: #0B5A71;
+            border-color: #0B5A71;
+        }
+        
+        /* Contenedor y tabla */
+        .table-container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 20px auto;
+        }
+        .table {
+            width: 100%;
+            margin-bottom: 0;
+            table-layout: auto;
+        }
+        .table th, .table td {
+            text-align: center;
+            padding: 0.25rem;
+            vertical-align: middle;
+        }
+        .table th {
+            white-space: nowrap;
+        }
+        /* Fijar ancho a la 6ª columna (Código Cina) */
+        .table th:nth-child(6),
+        .table td:nth-child(6) {
+            width: 200px;
+        }
+        
+        /* Títulos */
+        .page-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #052B38;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        /* Estilo para "Código Cina" dentro de la tabla */
+        .table td a.cina-code {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            max-width: 200px;
+            position: relative;
+        }
+        .table td a.cina-code:hover {
+            overflow-x: auto;
+        }
+        .table td a.cina-code::-webkit-scrollbar {
+            height: 7px;
+        }
+        .table td a.cina-code::-webkit-scrollbar-thumb {
+            background-color: #999;
+            border-radius: 10px;
+        }
+        .table td a.cina-code::-webkit-scrollbar-thumb:hover {
+            background-color: #555;
+        }
+        .table td a.cina-code::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+        
+        /* Estilo para Observaciones (scroll similar a cina-code) */
+        .observacion-scroll {
+            display: block;
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            position: relative;
+        }
+        .observacion-scroll:hover {
+            overflow-x: auto;
+        }
+        .observacion-scroll::-webkit-scrollbar {
+            height: 7px;
+        }
+        .observacion-scroll::-webkit-scrollbar-thumb {
+            background-color: #999;
+            border-radius: 10px;
+        }
+        .observacion-scroll::-webkit-scrollbar-thumb:hover {
+            background-color: #555;
+        }
+        .observacion-scroll::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+    </style>
+</head>
+{% include 'header.html' %}
+<body>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="flash-overlay show" role="alert">
+            {{ messages[0] }}
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const flashOverlay = document.querySelector('.flash-overlay');
+                flashOverlay.classList.add('show');
+                setTimeout(function() {
+                    flashOverlay.classList.add('hide');
+                }, 3000);
+                setTimeout(function() {
+                    flashOverlay.style.display = 'none';
+                }, 3500);
+            });
+        </script>
+    {% endif %}
+    {% endwith %}
+    <main class="container" style="padding-top: 20px;">
+        <h2 class="page-title">ENTRADAS POR PROVEEDOR</h2>
+        <form method="get" action="{{ url_for('entradas_proveedor') }}" class="filter-form form-inline">
+            <div class="form-group">
+                <label for="fecha_inicio">Fecha Inicio</label>
+                <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control"
+                       value="{{ request.args.get('fecha_inicio', '') }}">
+            </div>
+            <div class="form-group">
+                <label for="fecha_fin">Fecha Fin</label>
+                <input type="date" id="fecha_fin" name="fecha_fin" class="form-control"
+                       value="{{ request.args.get('fecha_fin', '') }}">
+            </div>
+            <div class="form-group">
+                <label for="proveedor">Proveedor</label>
+                <select id="proveedor" name="proveedor" class="form-control">
+                    <option value="">Todos</option>
+                    {% for prov in proveedores %}
+                    <option value="{{ prov.idProveedor }}" {% if prov.idProveedor|string == selected_proveedor|string %}selected{% endif %}>
+                        {{ prov.nombreProveedor }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn custom-button">Filtrar</button>
+            </div>
+        </form>
+        <div class="table-container">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Kilos Entrada</th>
+                        <th>Kilos Descuento</th>
+                        <th>Nº Paquetes</th>
+                        <th>Observaciones</th>
+                        <th>Código Cina</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entrada in entradas %}
+                    <tr>
+                        <td>{{ entrada.fecha.strftime("%Y-%m-%d") }}</td>
+                        <td>{{ entrada.kg_entrada|euroformat }}</td>
+                        <td>{{ entrada.kg_descuento|euroformat }}</td>
+                        <td>{{ entrada.n_paquetes }}</td>
+                        <td>
+                            <div class="observacion-scroll">{{ entrada.observaciones }}</div>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('detalle', codigo_cina=entrada.cdCina) }}" class="cina-code">
+                                {{ entrada.cdCina }}
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8">No se encontraron registros en el rango de fechas seleccionado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <footer class="py-3">
+        <p></p>
+    </footer>
+    <!-- Incluye jQuery y Select2 JS -->
+    <script src="/static/js/jquery-3.5.1.min.js"></script>
+    <script src="/static/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#proveedor').select2({
+                placeholder: "Seleccione un proveedor",
+                allowClear: true,
+                width: 'resolve'
+            });
+        });
+    </script>
+</body>
+</html>

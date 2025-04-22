@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Registro - {{ detalle[4] }}</title>
+    <!-- Hoja de estilos de Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        main {
+            margin-top: 90px;
+        }
+        /* Se actualiza el estilo del título para que sea igual al del segundo ejemplo */
+        .page-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #052B38;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        table {
+            margin-bottom: 1.5rem;
+        }
+        .table-bordered th, .table-bordered td {
+            border: 1px solid #052B38;
+        }
+        .table-bordered thead th {
+            background-color: #e9ecef;
+            color: #052B38;
+            border: 1px solid #052B38;
+        }
+        .table thead th {
+            font-weight: bold;
+        }
+        footer {
+            background-color: #052B38;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+{% include 'header.html' %}
+<body>
+    <main class="container">
+        <!-- Se cambia de h1 a h2 y se asigna la clase page-title -->
+        <h2 class="page-title">{{ detalle[4] }}</h2>
+        {% if detalle %}
+        <div class="row">
+            <!-- Primera tabla -->
+            <div class="col-md-6">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>CAMPO</th>
+                            <th>VALOR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>ID Registro</td><td>{{ detalle[0] }}</td></tr>
+                        <tr><td>Contrato Marco</td><td>{{ detalle[1] }}</td></tr>
+                        <tr><td>Paraje</td><td>{{ detalle[2] }}</td></tr>
+                        <tr><td>Año Cosecha</td><td>{{ detalle[3] }}</td></tr>
+                        <tr><td>Código CINA</td><td>{{ detalle[4] }}</td></tr>
+                        <tr><td>Fecha Acuerdo</td><td>{{ detalle[5] }}</td></tr>
+                        <tr><td>Proveedor Nombre</td><td>{{ detalle[21] }}</td></tr>
+                        <tr><td>Localidad</td><td>{{ detalle[7] }}</td></tr>
+                        <tr><td>Coordenadas</td><td>{{ detalle[8] }}</td></tr>
+                        <tr><td>Kilos</td><td>{{ detalle[9]|euroformat }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Segunda tabla -->
+            <div class="col-md-6">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>CAMPO</th>
+                            <th>VALOR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Número de Paquetes</td><td>{{ detalle[10]|euroformat }}</td></tr>
+                        <tr><td>Kilos por Paquete</td><td>{{ detalle[11]|euroformat }}</td></tr>
+                        <tr><td>Precio por Tonelada</td><td>{{ detalle[12] }}</td></tr>
+                        <tr><td>Tipo Paja Riego</td><td>{{ detalle[13] }}</td></tr>
+                        <tr><td>Tipo Cereal</td><td>{{ detalle[22] }}</td></tr>
+                        <tr><td>Tipo Calidad</td><td>{{ detalle[15] }}</td></tr>
+                        <tr><td>Planta Destino</td><td>{{ detalle[16] }}</td></tr>
+
+                        <!-- Fila de Comentarios con collapse, usando un enlace -->
+                        <tr>
+                            <td>Comentarios</td>
+                            <td>
+                                <a href="#collapseComentarios"
+                                   data-toggle="collapse"
+                                   aria-expanded="false"
+                                   aria-controls="collapseComentarios"
+                                   class="text-primary">
+                                    Ver comentarios
+                                </a>
+                                <div class="collapse mt-2" id="collapseComentarios">
+                                    <p>{{ detalle[17] }}</p>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr><td>Estado Pedido</td><td>{{ detalle[18] }}</td></tr>
+                        <tr><td>Kilos Entregados</td><td>{{ detalle[19]|euroformat }}</td></tr>
+                        <tr><td>Kilos Diferencia</td><td>{{ detalle[20]|euroformat }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+            <p>No se encontraron detalles para este registro.</p>
+        {% endif %}
+    </main>
+    <footer>
+        <p></p>
+    </footer>
+
+    <!-- Dependencias de JavaScript para que funcione el collapse -->
+    <script src="/static/js/jquery-3.5.1.slim.min.js"></script>
+    <script src="/static/js/4.5.2.bootstrap.bundle.min.js"></script>
+</body>
+</html>

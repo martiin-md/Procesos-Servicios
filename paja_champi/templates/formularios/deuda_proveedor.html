@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}DEUDA PROVEEDORES{% endblock %}</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Agregar Select2 CSS -->
+  <link rel="stylesheet" href="/static/css/select2.min.css">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    body {
+      flex: 1;
+    }
+    main {
+      flex: 1;
+      padding-top: 20px;
+    }
+    footer {
+      background-color: #052B38;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+    .table-container {
+      max-height: 700px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+      margin-top: 5px;
+    }
+    .table th, .table td {
+      text-align: center;
+      padding: 0.5rem;
+      vertical-align: middle;
+    }
+
+    .custom-select {
+      background-color: #0D6D8D;
+      color: white;
+      border-color: #0D6D8D;
+      font-size: 0.875rem;
+      width: 100%;
+      /* Se elimina el margin-left para evitar desplazamientos */
+      margin-left: 0;
+    }
+    .custom-select:focus {
+      border-color: #0B5A71;
+      box-shadow: 0 0 0 0.2rem rgba(13, 109, 141, 0.25);
+    }
+    .page-title {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #052B38;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    /* Contenedor para centrar título y select de forma similar a la vista de Entradas */
+    .header-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    /* Opcional: envolver el select en un form-group similar al otro ejemplo */
+    .header-form .form-group {
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+{% include 'header.html' %}
+<body>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="flash-overlay show" role="alert">
+        {{ messages[0] }}
+      </div>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          const flashOverlay = document.querySelector('.flash-overlay');
+          flashOverlay.classList.add('show');
+          setTimeout(function() {
+            flashOverlay.classList.add('hide');
+          }, 3000);
+          setTimeout(function() {
+            flashOverlay.style.display = 'none';
+          }, 3500);
+        });
+      </script>
+    {% endif %}
+  {% endwith %}
+  
+  <main class="container my-8" style="margin-top: 90px;">
+    <div class="header-container">
+      <h2 class="page-title">DEUDA PROVEEDORES</h2>
+      <!-- Formulario con select similar al de Entradas por Proveedor -->
+      <form method="get" action="{{ url_for('deuda_proveedor') }}" class="header-form">
+        <div class="form-group mb-0">
+          <!-- Sin opción fija "Todos", para que se muestre el placeholder -->
+          <select id="proveedor" name="proveedor" class="form-control custom-select" onchange="this.form.submit()">
+            <option value=""></option>
+            {% for prov in proveedores %}
+              <option value="{{ prov.idProveedor }}" {% if prov.idProveedor|string == request.args.get('proveedor', '') %}selected{% endif %}>
+                {{ prov.nombreProveedor }}
+              </option>
+            {% endfor %}
+          </select>          
+        </div>
+      </form>
+    </div>
+    
+    {% if deudas %}
+      <div class="table-container">
+        <table class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>Proveedor</th>
+              <th>Total paja contratada (kg)</th>
+              <th>Paja entregada (kg)</th>
+              <th>Deuda (kg)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in deudas %}
+              <tr>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2]|euroformat }}</td>
+                <td>{{ row[3]|euroformat }}</td>
+                <td>{{ row[4]|euroformat }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-center">No hay proveedores con deuda pendiente.</p>
+    {% endif %}
+  </main>
+  
+  <footer class="py-3">
+    <p></p>
+  </footer>
+  
+  <!-- Agregar jQuery y Select2 JS -->
+  <script src="/static/js/jquery-3.5.1.min.js"></script>
+  <script src="/static/js/select2.min.js"></script>
+  <script>
+    $(document).ready(function(){
+      $('#proveedor').select2({
+        placeholder: "Seleccione un proveedor",
+        allowClear: true,
+        width: 'resolve'
+      });
+    });
+  </script>
+</body>
+</html>
